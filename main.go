@@ -57,7 +57,7 @@ func (q Quiz) Run(duration time.Duration) {
 		responses <- OutOfQuestions
 	}()
 
-label:
+QuizLoop:
 	for {
 		select {
 		case response := <-responses:
@@ -67,14 +67,14 @@ label:
 				} else if response == Incorrect {
 					incorrectCount += 1
 				} else if response == OutOfQuestions {
-					break label
+					break QuizLoop
 				} else {
 					panic("Unknown response")
 				}
 			}
 		case <-timer.C:
 			fmt.Println("Out of time")
-			break label
+			break QuizLoop
 		}
 	}
 
