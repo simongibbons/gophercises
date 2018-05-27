@@ -17,14 +17,6 @@ type Question struct {
 
 type Quiz []Question
 
-type QuizResponse int
-
-const (
-	Correct QuizResponse = iota
-	Incorrect
-	OutOfQuestions
-)
-
 func main() {
 	quiz, err := readQuizFromCSV("problems.csv")
 	if err != nil {
@@ -40,42 +32,27 @@ func (q Quiz) Run(duration time.Duration) {
 	correctCount := 0
 	incorrectCount := 0
 
-	responses := make(chan QuizResponse)
-
-	scanner := bufio.NewScanner(os.Stdin)
+	outOfQuestions := make(chan bool)
 
 	go func() {
+		scanner := bufio.NewScanner(os.Stdin)
 		for _, question := range q {
 			fmt.Printf("%s > ", question.question)
 			scanner.Scan()
 			if scanner.Text() == question.answer {
-				responses <- Correct
+				correctCount += 1
 			} else {
-				responses <- Incorrect
+				incorrectCount += 1
 			}
 		}
-		responses <- OutOfQuestions
+		outOfQuestions <- true
 	}()
 
-QuizLoop:
-	for {
-		select {
-		case response := <-responses:
-			{
-				if response == Correct {
-					correctCount += 1
-				} else if response == Incorrect {
-					incorrectCount += 1
-				} else if response == OutOfQuestions {
-					break QuizLoop
-				} else {
-					panic("Unknown response")
-				}
-			}
-		case <-timer.C:
-			fmt.Println("Out of time")
-			break QuizLoop
-		}
+	select {
+	case <-outOfQuestions:
+		fmt.Println("Out of questions")
+	case <-timer.C:
+		fmt.Println("Out of time")
 	}
 
 	totalAsked := correctCount + incorrectCount
@@ -95,7 +72,6 @@ func readQuizFromCSV(filename string) (q Quiz, err error) {
 		if err == io.EOF {
 			break
 		}
-
 		if err != nil {
 			return nil, err
 		}
