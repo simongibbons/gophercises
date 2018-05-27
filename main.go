@@ -45,7 +45,7 @@ func readQuizFromCSV(filename string) (q Quiz, err error) {
 		}
 
 		if len(line) != 2 {
-			return nil, errors.New("Expected 2 columns in csv record")
+			return nil, errors.New("expected 2 columns in csv record")
 		}
 
 		q = append(q, Question{
