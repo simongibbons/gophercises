@@ -1,22 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"encoding/csv"
 	"bufio"
-	"io"
+	"encoding/csv"
 	"errors"
+	"fmt"
+	"io"
 	"log"
+	"os"
 )
 
 type Question struct {
 	question string
-	answer string
+	answer   string
 }
 
 type Quiz []Question
-
 
 func main() {
 	quiz, err := readQuizFromCSV("problems.csv")
@@ -26,7 +25,6 @@ func main() {
 
 	fmt.Printf("Got %d questions for quiz\n", len(quiz))
 }
-
 
 func readQuizFromCSV(filename string) (q Quiz, err error) {
 	csvFile, err := os.Open(filename)
@@ -52,7 +50,7 @@ func readQuizFromCSV(filename string) (q Quiz, err error) {
 
 		q = append(q, Question{
 			question: line[0],
-			answer: line[1],
+			answer:   line[1],
 		})
 	}
 
