@@ -28,7 +28,6 @@ func main() {
 }
 
 func (q Quiz) Run(duration time.Duration) {
-	timer := time.NewTimer(duration)
 	correctCount := 0
 	incorrectCount := 0
 
@@ -50,9 +49,9 @@ func (q Quiz) Run(duration time.Duration) {
 
 	select {
 	case <-outOfQuestions:
-		fmt.Println("Out of questions")
-	case <-timer.C:
-		fmt.Println("Out of time")
+		fmt.Println("\nOut of questions")
+	case <-time.After(duration):
+		fmt.Println("\nOut of time")
 	}
 
 	totalAsked := correctCount + incorrectCount
@@ -69,10 +68,10 @@ func readQuizFromCSV(filename string) (q Quiz, err error) {
 	reader := csv.NewReader(bufio.NewReader(csvFile))
 	for {
 		line, err := reader.Read()
-		if err == io.EOF {
-			break
-		}
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
 			return nil, err
 		}
 
