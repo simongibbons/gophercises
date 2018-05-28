@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"flag"
 )
 
 type Question struct {
@@ -18,13 +19,17 @@ type Question struct {
 type Quiz []Question
 
 func main() {
-	quiz, err := readQuizFromCSV("problems.csv")
+	quizCsvPath := flag.String("path", "problems.csv", "`path` to csv containing quiz questions")
+	durationSeconds := flag.Int64("duration", 30, "duration of the quiz in seconds")
+	flag.Parse()
+
+	quiz, err := readQuizFromCSV(*quizCsvPath)
 	if err != nil {
 		log.Fatalf("Error parsing quiz csv: %v", err)
 	}
 
 	fmt.Printf("Got %d questions for quiz\n", len(quiz))
-	quiz.Run(30 * time.Second)
+	quiz.Run(time.Duration(*durationSeconds) * time.Second)
 }
 
 func (q Quiz) Run(duration time.Duration) {
