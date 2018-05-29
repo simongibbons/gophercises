@@ -1,31 +1,28 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 
 	"github.com/simongibbons/gophercises/urlshort"
+	"io/ioutil"
+	"log"
+)
+
+var (
+	flagYAMLPath string
 )
 
 func main() {
-	mux := defaultMux()
+	parseFlags()
 
-	// Build the MapHandler using the mux as the fallback
-	pathsToUrls := map[string]string{
-		"/urlshort-godoc": "https://godoc.org/github.com/gophercises/urlshort",
-		"/yaml-godoc":     "https://godoc.org/gopkg.in/yaml.v2",
+	yaml, err := ioutil.ReadFile(flagYAMLPath)
+	if err != nil {
+		log.Fatalf("Couldn't read yaml config: %s. Error: %s", flagYAMLPath, err)
 	}
-	mapHandler := urlshort.MapHandler(pathsToUrls, mux)
 
-	// Build the YAMLHandler using the mapHandler as the
-	// fallback
-	yaml := `
-- path: /urlshort
-  url: https://github.com/gophercises/urlshort
-- path: /urlshort-final
-  url: https://github.com/gophercises/urlshort/tree/solution
-`
-	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
+	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), defaultMux())
 	if err != nil {
 		panic(err)
 	}
@@ -41,4 +38,9 @@ func defaultMux() *http.ServeMux {
 
 func hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Hello, world!")
+}
+
+func parseFlags() {
+	flag.StringVar(&flagYAMLPath, "yaml", "redirects.yaml", "yaml file to read redirects from")
+	flag.Parse()
 }

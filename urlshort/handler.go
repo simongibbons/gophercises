@@ -3,6 +3,7 @@ package urlshort
 import (
 	"gopkg.in/yaml.v2"
 	"net/http"
+	"fmt"
 )
 
 // MapHandler will return an http.HandlerFunc (which also
@@ -15,7 +16,7 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 	return func(writer http.ResponseWriter, request *http.Request) {
 		redirectUrl, ok := pathsToUrls[request.URL.Path]
 		if ok {
-			println("Redirecting from {v} to {v}", request.URL, redirectUrl)
+			fmt.Printf("Redirecting from %v to %v\n", request.URL, redirectUrl)
 			http.Redirect(writer, request, redirectUrl, http.StatusFound)
 		} else {
 			println("Not found")
