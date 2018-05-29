@@ -6,6 +6,14 @@ import (
 	"fmt"
 )
 
+
+// HelloHandler will return a fixed string as a response to any request
+func HelloHandler() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Fprintln(writer, "Hello, world!")
+	}
+}
+
 // MapHandler will return an http.HandlerFunc (which also
 // implements http.Handler) that will attempt to map any
 // paths (keys in the map) to their corresponding URL (values
@@ -67,6 +75,9 @@ func parseYAML(yml []byte) (redirects []redirect, err error) {
 func buildMap(redirects []redirect) map[string]string {
 	output := make(map[string]string, len(redirects))
 	for _, redirect := range redirects {
+		if _, ok := output[redirect.Path]; ok {
+			fmt.Printf("Multiple redirects for %s found", redirect.Path)
+		}
 		output[redirect.Path] = redirect.Url
 	}
 	return output
