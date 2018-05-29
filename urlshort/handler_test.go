@@ -3,30 +3,60 @@ package urlshort
 import (
 	"testing"
 	"net/http/httptest"
+	"net/http"
 )
 
 
-func TestHelloHandler(t *testing.T) {
-	req := httptest.NewRequest("GET", "/hello", nil)
-	w := httptest.NewRecorder()
-
-	handler_func := HelloHandler()
-	handler_func(w, req)
-
-	if w.Code != 200 {
-		t.Errorf("Expected 200 code from HelloHandler, got %d instead", w.Code)
+func TestMapHandler(t *testing.T) {
+	pathsToUrls := map[string]string{
+		"/foo": "http://bar.com",
 	}
 
-	if w.Body.String() != "Hello, world!\n" {
-		t.Errorf("Incorrect body for request to HelloHandler")
+	handler_func := MapHandler(pathsToUrls, http.NotFoundHandler())
+
+	req := httptest.NewRequest("GET", "/foo", nil)
+	w := httptest.NewRecorder()
+	handler_func(w, req)
+
+	if w.Code != 302 {
+		t.Errorf("Expected 302 code from MapHandler, got %d instead", w.Code)
+	}
+
+	req = httptest.NewRequest("GET", "/not_a_url", nil)
+	w = httptest.NewRecorder()
+	handler_func(w, req)
+
+	if w.Code != 404 {
+		t.Errorf("Expected 404 code from MapHandler, got %d instead", w.Code)
 	}
 }
 
 
-func TestMapHandler(t *testing.T) {
-	//pathsToUrls := map[string]string{
-	//	"/foo": "http://bar.com",
-	//}
+func TestYAMLHandler(t *testing.T) {
+	yaml := `
+- path: /baz
+  url: http://foo.co.uk
+`
+	handler_func, err := YAMLHandler([]byte(yaml), http.NotFoundHandler())
+	if err != nil {
+		t.Errorf("Error when trying to parse valid YAML into a handler: %v", err)
+	}
 
-	//handler := MapHandler(pathsToUrls, )
+	req := httptest.NewRequest("GET", "/baz", nil)
+	w := httptest.NewRecorder()
+	handler_func(w, req)
+
+	if w.Code != 302 {
+		t.Errorf("Expected 302 code from YAMLHandler, got %d instead", w.Code)
+	}
+}
+
+
+func TestYAMLHandlerInvalidYAML(t *testing.T) {
+	yaml := "I am not YAML"
+
+	_, err := YAMLHandler([]byte(yaml), http.NotFoundHandler())
+	if err == nil {
+		t.Errorf("expected Error when parsing invalid YAML")
+	}
 }

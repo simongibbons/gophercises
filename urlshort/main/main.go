@@ -22,18 +22,12 @@ func main() {
 		log.Fatalf("Couldn't read yaml config: %s. Error: %s", flagYAMLPath, err)
 	}
 
-	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), defaultMux())
+	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), http.NotFoundHandler())
 	if err != nil {
-		panic(err)
+		log.Fatalf("Error parsing yaml config: %s", err)
 	}
 	fmt.Println("Starting the server on :8080")
 	http.ListenAndServe(":8080", yamlHandler)
-}
-
-func defaultMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", urlshort.HelloHandler())
-	return mux
 }
 
 func parseFlags() {
