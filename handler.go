@@ -63,7 +63,7 @@ func parseYAML(yml []byte) (redirects []redirect, err error) {
 	return redirects, nil
 }
 
-func buildMap(redirects []redirect) (map[string]string) {
+func buildMap(redirects []redirect) map[string]string {
 	output := make(map[string]string, len(redirects))
 	for _, redirect := range redirects {
 		output[redirect.Path] = redirect.Url
