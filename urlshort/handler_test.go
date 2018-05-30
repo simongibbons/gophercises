@@ -1,11 +1,10 @@
 package urlshort
 
 import (
-	"testing"
-	"net/http/httptest"
 	"net/http"
+	"net/http/httptest"
+	"testing"
 )
-
 
 func TestMapHandler(t *testing.T) {
 	pathsToUrls := map[string]string{
@@ -31,7 +30,6 @@ func TestMapHandler(t *testing.T) {
 	}
 }
 
-
 func TestYAMLHandler(t *testing.T) {
 	yaml := `
 - path: /baz
@@ -50,7 +48,6 @@ func TestYAMLHandler(t *testing.T) {
 		t.Errorf("Expected 302 code from YAMLHandler, got %d instead", w.Code)
 	}
 }
-
 
 func TestYAMLHandlerInvalidYAML(t *testing.T) {
 	yaml := "I am not YAML"

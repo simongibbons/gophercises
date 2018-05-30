@@ -4,12 +4,12 @@ import (
 	"bufio"
 	"encoding/csv"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"time"
-	"flag"
 )
 
 type Question struct {
