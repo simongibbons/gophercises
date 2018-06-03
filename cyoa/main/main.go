@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/simongibbons/gophercises/cyoa"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"fmt"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 		log.Fatalf("cannot open file error: %s", err)
 	}
 
-	adventure , err := cyoa.ParseCYOA(json)
+	adventure, err := cyoa.ParseCYOA(json)
 	if err != nil {
 		log.Fatalf("cannot parse CYOA: %s", err)
 	}

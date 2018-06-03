@@ -8,7 +8,7 @@ import (
 
 type Handler struct {
 	adventure CYOA
-	tmpl *template.Template
+	tmpl      *template.Template
 }
 
 const (
@@ -47,7 +47,6 @@ func NewHandler(adventure CYOA) Handler {
 	return Handler{adventure: adventure, tmpl: tmpl}
 }
 
-
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	arc := h.adventure.GetArc(getArcName(*r.URL))
 
@@ -59,7 +58,6 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	h.tmpl.Execute(w, arc)
 }
-
 
 func getArcName(u url.URL) string {
 	if u.Path == "/" {
