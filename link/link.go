@@ -43,7 +43,7 @@ func getHref(attrs []html.Attribute) string {
 
 func getText(node *html.Node) (s string) {
 	if node.Type == html.TextNode {
-		return strings.TrimSpace(node.Data)
+		return strings.Trim(node.Data, "\n\r")
 	}
 
 	for n := node.FirstChild; n != nil; n = n.NextSibling {
