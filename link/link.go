@@ -2,10 +2,9 @@ package link
 
 import (
 	"io"
-	"strings"
-
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
+	"strings"
 )
 
 type Link struct {
@@ -29,7 +28,7 @@ func Parse(r io.Reader) (l []Link, err error) {
 func linkFromNode(n *html.Node) (l Link) {
 	return Link{
 		Href: getHref(n.Attr),
-		Text: strings.Join(getText(n), ""),
+		Text: getText(n),
 	}
 }
 
@@ -42,15 +41,15 @@ func getHref(attrs []html.Attribute) string {
 	return ""
 }
 
-func getText(node *html.Node) (rv []string) {
+func getText(node *html.Node) (s string) {
 	if node.Type == html.TextNode {
-		return []string{node.Data}
+		return strings.TrimSpace(node.Data)
 	}
 
 	for n := node.FirstChild; n != nil; n = n.NextSibling {
-		rv = append(rv, getText(n)...)
+		s += getText(n)
 	}
-	return rv
+	return s
 }
 
 func linkNodes(root *html.Node) (nodes []*html.Node) {
