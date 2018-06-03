@@ -14,13 +14,11 @@ func main() {
 		log.Fatalf("cannot open file error: %s", err)
 	}
 
-	adventure, err := cyoa.ParseCYOA(json)
+	adventure, err := cyoa.ParseJSON(json)
 	if err != nil {
 		log.Fatalf("cannot parse CYOA: %s", err)
 	}
 
-	h := cyoa.NewHandler(adventure)
-
 	fmt.Println("Listening on :8080")
-	log.Fatal(http.ListenAndServe(":8080", h))
+	log.Fatal(http.ListenAndServe(":8080", cyoa.NewHandler(adventure)))
 }

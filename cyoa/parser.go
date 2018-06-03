@@ -35,8 +35,8 @@ func (c CYOA) GetArc(arc_id string) *StoryArc {
 	return &arc
 }
 
-// ParseCYOA parses the JSON representation of a CYOA data file.
-func ParseCYOA(cyoaJson []byte) (cyoa CYOA, err error) {
+// ParseJSON parses the JSON representation of a CYOA data file.
+func ParseJSON(cyoaJson []byte) (cyoa CYOA, err error) {
 	err = json.Unmarshal(cyoaJson, &cyoa)
 	if err != nil {
 		return nil, err

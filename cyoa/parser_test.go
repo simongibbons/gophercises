@@ -25,7 +25,7 @@ func TestParseCYOA(t *testing.T) {
     "options": []
   }
 }`
-	cyoa, err := ParseCYOA([]byte(CYOAJson))
+	cyoa, err := ParseJSON([]byte(CYOAJson))
 
 	if err != nil {
 		t.Errorf("Error shouldn't have been thrown while parsing")
@@ -46,7 +46,7 @@ func TestValidateCYOANoIntro(t *testing.T) {
     "options": []
   }
 }`
-	_, err := ParseCYOA([]byte(noIntroJSON))
+	_, err := ParseJSON([]byte(noIntroJSON))
 
 	if err != noInitialArcError {
 		t.Errorf("Should have detected `intro` arc isn't present")
@@ -61,7 +61,7 @@ func TestValidateCYOAInvalidOption(t *testing.T) {
     "options": [{"arc": "not_an_arc"}]
   }
 }`
-	_, err := ParseCYOA([]byte(invalidOptionJSON))
+	_, err := ParseJSON([]byte(invalidOptionJSON))
 
 	if err != invalidOptionError {
 		t.Errorf("Should have detected invalid options is present")
