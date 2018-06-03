@@ -31,3 +31,26 @@ func TestParseWithComment(t *testing.T) {
 		t.Fatalf("Link text is wrong")
 	}
 }
+
+
+func TestParseNoHref(t *testing.T) {
+	html := "<a>no href</a>"
+	links, err := Parse(strings.NewReader(html))
+
+	if err != nil {
+		t.Fatalf("There should be no error in parsing")
+	}
+
+	if len(links) != 1 {
+		t.Fatalf("There should be 1 link")
+	}
+
+	link := links[0]
+	if link.Href != "" {
+		t.Fatalf("Link href is wrong")
+	}
+
+	if link.Text != "no href" {
+		t.Fatalf("Link text is wrong")
+	}
+}
