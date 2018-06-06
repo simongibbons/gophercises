@@ -9,4 +9,3 @@ var doCmd = &cobra.Command{
 		// Do Stuff Here
 	},
 }
-
