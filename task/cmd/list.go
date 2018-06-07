@@ -22,7 +22,7 @@ var listCmd = &cobra.Command{
 		}
 
 		for _, t := range tasks {
-			fmt.Printf("%d - %s\n", t.Id, t.Content)
+			fmt.Printf("%v - %s\n", *t.Id, t.Content)
 		}
 	},
 }

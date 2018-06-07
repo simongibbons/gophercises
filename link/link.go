@@ -1,9 +1,9 @@
 package link
 
 import (
-	"io"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
+	"io"
 	"strings"
 )
 

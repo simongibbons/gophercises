@@ -1,8 +1,8 @@
 package link
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestParseWithComment(t *testing.T) {
@@ -31,7 +31,6 @@ func TestParseWithComment(t *testing.T) {
 		t.Fatalf("Link text is wrong")
 	}
 }
-
 
 func TestParseNoHref(t *testing.T) {
 	html := "<a>no href</a>"

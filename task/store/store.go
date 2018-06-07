@@ -31,23 +31,7 @@ func (s *Store) Close() {
 }
 
 func (s *Store) AddTask(t Task) (*Task, error) {
-	err := s.Db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(taskBucket)
-		if bucket == nil {
-			panic("Bucket not initialised")
-		}
-
-		id, _ := bucket.NextSequence()
-		t.Id = int(id)
-
-		j, err := json.Marshal(t)
-		if err != nil {
-			return err
-		}
-
-		bucket.Put(itob(t.Id), j)
-		return nil
-	})
+	err := s.updateOrCreateTask(t)
 
 	if err != nil {
 		return nil, err
@@ -55,6 +39,30 @@ func (s *Store) AddTask(t Task) (*Task, error) {
 
 	return &t, err
 }
+
+func (s *Store) updateOrCreateTask(t Task) error {
+	return s.Db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(taskBucket)
+		if bucket == nil {
+			panic("Bucket not initialised")
+		}
+
+		if t.Id == nil {
+			id, _ := bucket.NextSequence()
+			intId := int(id)
+			t.Id = &intId
+		}
+
+		j, err := json.Marshal(t)
+		if err != nil {
+			return err
+		}
+
+		bucket.Put(itob(*t.Id), j)
+		return nil
+	})
+}
+
 
 func (s *Store) GetTasks() (ts []Task, err error) {
 	err = s.Db.View(func(tx *bolt.Tx) error {
@@ -90,6 +98,6 @@ func itob(v int) []byte {
 
 type Task struct {
 	Content  string `json:"content"`
-	Id       int    `json:"id"`
+	Id       *int    `json:"id"`
 	Complete bool   `json:"complete"`
 }
