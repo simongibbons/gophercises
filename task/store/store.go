@@ -49,8 +49,7 @@ func (s *Store) updateOrCreateTask(t Task) error {
 
 		if t.Id == nil {
 			id, _ := bucket.NextSequence()
-			intId := int(id)
-			t.Id = &intId
+			t.Id = &id
 		}
 
 		j, err := json.Marshal(t)
@@ -62,7 +61,6 @@ func (s *Store) updateOrCreateTask(t Task) error {
 		return nil
 	})
 }
-
 
 func (s *Store) GetTasks() (ts []Task, err error) {
 	err = s.Db.View(func(tx *bolt.Tx) error {
@@ -90,14 +88,14 @@ func (s *Store) GetTasks() (ts []Task, err error) {
 }
 
 // itob returns an 8-byte big endian representation of v.
-func itob(v int) []byte {
+func itob(v uint64) []byte {
 	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, uint64(v))
+	binary.BigEndian.PutUint64(b, v)
 	return b
 }
 
 type Task struct {
-	Content  string `json:"content"`
-	Id       *int    `json:"id"`
-	Complete bool   `json:"complete"`
+	Content  string  `json:"content"`
+	Id       *uint64 `json:"id"`
+	Complete bool    `json:"complete"`
 }
